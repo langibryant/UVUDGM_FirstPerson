@@ -19,6 +19,10 @@ public class PlayerController : MonoBehaviour
 
     private Weapon weapon;
 
+    public int curHp;
+
+    public int maxHp = 100;
+
     void Awake() {
         weapon = GetComponent<Weapon>();
     }
@@ -80,5 +84,17 @@ public class PlayerController : MonoBehaviour
         if(Physics.Raycast(ray, 1.1f)){
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
+    }
+
+    public void TakeDamage(){
+
+    }
+
+    public void GiveHealth(int amountToGive){
+        curHp = Mathf.Clamp(curHp + amountToGive, 0, maxHp);
+    }
+
+    public void GiveAmmo(int amountToGive){
+        weapon.curAmmo = Mathf.Clamp(weapon.curAmmo + amountToGive, 0, weapon.maxAmmo);
     }
 }
