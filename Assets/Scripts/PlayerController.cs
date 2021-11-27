@@ -33,6 +33,11 @@ public class PlayerController : MonoBehaviour
         // Get Components
         camera = Camera.main;
         rb = GetComponent<Rigidbody>();
+
+        // initialize UI
+        GameUI.instance.UpdateHealthBar(curHp, maxHp);
+        GameUI.instance.UpdateScoreText(0);
+        GameUI.instance.UpdateAmmoText(weapon.curAmmo, weapon.maxAmmo);
     }
 
     // Update is called once per frame
@@ -44,6 +49,13 @@ public class PlayerController : MonoBehaviour
             if(weapon.CanShoot()) {
                 weapon.Shoot();
             }
+        }
+        if(Input.GetButton("Jump")){
+            Jump();
+        }
+
+        if(GameManager.instance.gamePaused){
+            return;
         }
     }
 
@@ -86,15 +98,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(){
+    public void TakeDamage(int damage){
+        curHp -= damage;
 
+        if(curHp <= 0) {
+            Die();
+        }
+
+        GameUI.instance.UpdateHealthBar(curHp, maxHp);
     }
 
     public void GiveHealth(int amountToGive){
         curHp = Mathf.Clamp(curHp + amountToGive, 0, maxHp);
+        GameUI.instance.UpdateHealthBar(curHp, maxHp);
     }
 
     public void GiveAmmo(int amountToGive){
         weapon.curAmmo = Mathf.Clamp(weapon.curAmmo + amountToGive, 0, weapon.maxAmmo);
+        GameUI.instance.UpdateAmmoText(weapon.curAmmo, weapon.maxAmmo);
+    }
+
+    void Die(){
+        GameManager.instance.LoseGame();
     }
 }
